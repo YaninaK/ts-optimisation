@@ -43,7 +43,6 @@ class DatasetGenerator:
         """
         Generates dataset from the given DataFrame
         """
-
         data = pd.DataFrame(
             index=pd.MultiIndex.from_tuples(
                 sorted(list(set(zip(df["time"], df["fm_num"]))))
