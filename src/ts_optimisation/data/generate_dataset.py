@@ -54,9 +54,9 @@ class DatasetGenerator:
             ind = (row["time"], row["fm_num"])
             s = row["data"]
             if len(s) == self.n:
-                data.loc[ind, f"{s[0]}_{s[1]}_low"] = s[2]
-                data.loc[ind, f"{s[0]}_{s[1]}_high"] = s[3]
+                data.loc[ind, f"{s[0]}_{s[1]}_low"] = float(s[2])
+                data.loc[ind, f"{s[0]}_{s[1]}_high"] = float(s[3])
             else:
-                data.loc[ind, f"{s[0]}_{s[1]}_mom"] = s[2]
+                data.loc[ind, f"{s[0]}_{s[1]}_mom"] = float(s[2])
 
         return data
