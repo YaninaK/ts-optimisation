@@ -1,26 +1,29 @@
+import logging
+from typing import Optional
+
 import pandas as pd
+
+from . import DATA_CONFIG
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["generate_dataset"]
 
 
 class DatasetGenerator:
-    def __init__(self, n: int = 4):
-        self.n = n
-        self.cols = [
-            "Ni_Feed_mom",
-            "Cu_Feed_mom",
-            "Density_Feed_mom",
-            "Ni_Conc_mom",
-            "Ni_Tail_mom",
-            "Ni_Conc_low",
-            "Ni_Conc_high",
-            "Ni_Tail_low",
-            "Ni_Tail_high",
-            "Rec_Conc_mom",
-        ]
+    def __init__(self, config: Optional[dict] = None):
+        if config is None:
+            config = DATA_CONFIG
+
+        self.n = DATA_CONFIG["n_records"]
+        self.data_freq = DATA_CONFIG["data_freq"]
+        self.cols = DATA_CONFIG["columns"]
         self.extra_cols = [str]
 
     def fit_transform(self, text: str) -> pd.DataFrame:
         df = self._get_df_from_text(text)
         df = self._generate_dataset(df)
+        self._check_sequence_continuity(df)
         self.extra_cols = list(set(df.columns) - set(self.cols))
 
         return df[self.cols + self.extra_cols]
@@ -60,3 +63,20 @@ class DatasetGenerator:
                 data.loc[ind, f"{s[0]}_{s[1]}_mom"] = float(s[2])
 
         return data
+
+    def _check_sequence_continuity(self, df: pd.DataFrame) -> None:
+        """
+        Checks floating machine data sequence continuity
+        """
+        fm_id = list(set(df.index.get_level_values("fm_id")))
+        for i in fm_id:
+            n_periods = df.xs(f"{i}", level="fm_id").shape[0]
+            t0 = df.xs(f"{i}", level="fm_id").index[0]
+            if set(df.xs(f"{i}", level="fm_id").index) != set(
+                pd.date_range(t0, freq=self.data_freq, periods=n_periods)
+            ):
+                print(f"Data sequence of floating machine {i} is broken")
+                logger.warning(
+                    f"Data sequence of floating machine {i} is broken",
+                    UserWarning,
+                )
