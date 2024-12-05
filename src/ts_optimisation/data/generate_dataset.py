@@ -45,7 +45,8 @@ class DatasetGenerator:
         """
         data = pd.DataFrame(
             index=pd.MultiIndex.from_tuples(
-                sorted(list(set(zip(df["time"], df["fm_num"]))))
+                sorted(list(set(zip(df["time"], df["fm_num"])))),
+                names=["time", "fm_id"],
             )
         )
         for i in range(len(df)):
