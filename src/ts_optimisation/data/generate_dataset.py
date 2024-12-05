@@ -75,8 +75,6 @@ class DatasetGenerator:
             if set(df.xs(f"{i}", level="fm_id").index) != set(
                 pd.date_range(t0, freq=self.data_freq, periods=n_periods)
             ):
-                print(f"Data sequence of floating machine {i} is broken")
                 logger.warning(
-                    f"Data sequence of floating machine {i} is broken",
-                    UserWarning,
+                    f"Data sequence of floating machine {i} is broken\n",
                 )
