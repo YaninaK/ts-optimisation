@@ -7,7 +7,6 @@ sys.path.append(os.path.join(os.getcwd(), "src", "ts_optimisation"))
 import logging
 from typing import Optional, Tuple
 
-import numpy as np
 import pandas as pd
 from data import DATA_CONFIG as CONFIG
 
@@ -22,7 +21,7 @@ def generate_static_and_sequence_datasets(
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Генерирует 2 датасета:
-        df_stat - на датасет со статичными данными
+        df_stat - датасет со статичными данными
         df_seq - датасет с временными рядами.
     """
     if config is None:
