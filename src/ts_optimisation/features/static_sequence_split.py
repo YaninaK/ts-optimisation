@@ -8,7 +8,7 @@ import logging
 from typing import Optional, Tuple
 
 import pandas as pd
-from data import DATA_CONFIG as CONFIG
+from models import MODEL_CONFIG as CONFIG
 
 logger = logging.getLogger(__name__)
 

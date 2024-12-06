@@ -13,10 +13,4 @@ DATA_CONFIG = {
         "Rec_Conc_mom",
     ],
     "data_freq": "15min",
-    "input_stat_feature_names": [
-        "Ni_Feed_mom",
-        "Cu_Feed_mom",
-        "Density_Feed_mom",
-        "Rec_Conc_mom",
-    ],
 }
