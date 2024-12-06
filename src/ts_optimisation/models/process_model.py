@@ -43,7 +43,7 @@ def get_model(df_stat: pd.DataFrame, config: Optional[dict] = None) -> tf.keras.
     norm_Rec_Conc_mom.adapt(
         df_stat["Rec_Conc_mom"].infer_objects(copy=False).fillna(0).values
     )
-    norm_n_periods = tf.keras.layers.Normalization(axis=None, name="n_periods")
+    norm_n_periods = tf.keras.layers.Normalization(axis=None, name="norm_n_periods")
     norm_n_periods.adapt(
         df_stat["n_periods"].infer_objects(copy=False).fillna(0).values
     )
