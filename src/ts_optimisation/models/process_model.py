@@ -21,15 +21,32 @@ def get_model(df_stat: pd.DataFrame, config: Optional[dict] = None) -> tf.keras.
         config = MODEL_CONFIG
 
     norm_Ni_Feed_mom = tf.keras.layers.Normalization(axis=None, name="norm_Ni_Feed_mom")
-    norm_Ni_Feed_mom.adapt(df_stat["Ni_Feed_mom"].fillna(0).values)
+    norm_Ni_Feed_mom.adapt(
+        df_stat["Ni_Feed_mom"].infer_objects(copy=False).fillna(0).values
+    )
 
     norm_Cu_Feed_mom = tf.keras.layers.Normalization(axis=None, name="norm_Cu_Feed_mom")
-    norm_Cu_Feed_mom.adapt(df_stat["Cu_Feed_mom"].fillna(0).values)
+    norm_Cu_Feed_mom.adapt(
+        df_stat["Cu_Feed_mom"].infer_objects(copy=False).fillna(0).values
+    )
 
     norm_Density_Feed_mom = tf.keras.layers.Normalization(
         axis=None, name="norm_Density_Feed_mom"
     )
-    norm_Density_Feed_mom.adapt(df_stat["Density_Feed_mom"].fillna(0).values)
+    norm_Density_Feed_mom.adapt(
+        df_stat["Density_Feed_mom"].infer_objects(copy=False).fillna(0).values
+    )
+
+    norm_Rec_Conc_mom = tf.keras.layers.Normalization(
+        axis=None, name="norm_Rec_Conc_mom"
+    )
+    norm_Rec_Conc_mom.adapt(
+        df_stat["Rec_Conc_mom"].infer_objects(copy=False).fillna(0).values
+    )
+    norm_n_periods = tf.keras.layers.Normalization(axis=None, name="n_periods")
+    norm_n_periods.adapt(
+        df_stat["n_periods"].infer_objects(copy=False).fillna(0).values
+    )
 
     inputs = {
         "Ni_Feed_mom": tf.keras.Input(shape=(1,), dtype=int, name=f"Ni_Feed_mom"),
@@ -37,6 +54,8 @@ def get_model(df_stat: pd.DataFrame, config: Optional[dict] = None) -> tf.keras.
         "Density_Feed_mom": tf.keras.Input(
             shape=(1,), dtype=int, name=f"Density_Feed_mom"
         ),
+        "Rec_Conc_mom": tf.keras.Input(shape=(1,), dtype=float, name=f"Rec_Conc_mom"),
+        "n_periods": tf.keras.Input(shape=(1,), dtype=int, name=f"n_periods"),
         "LSTM input": tf.keras.Input(
             shape=(config["input_sequence_length"], config["n_features"]),
             name="LSTM input",
@@ -46,6 +65,8 @@ def get_model(df_stat: pd.DataFrame, config: Optional[dict] = None) -> tf.keras.
     layers.append(norm_Ni_Feed_mom(inputs["Ni_Feed_mom"]))
     layers.append(norm_Cu_Feed_mom(inputs["Cu_Feed_mom"]))
     layers.append(norm_Density_Feed_mom(inputs["Density_Feed_mom"]))
+    layers.append(norm_Rec_Conc_mom(inputs["Rec_Conc_mom"]))
+    layers.append(norm_n_periods(inputs["n_periods"]))
 
     stat_features = tf.keras.layers.Concatenate(axis=-1, name="stat_features")(layers)
 
